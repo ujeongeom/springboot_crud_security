@@ -50,15 +50,17 @@ management:
 app-info:
   node-ip: "192.168.0.1"
   pod-ip: "192.168.0.1"
-  pod-name: "test"
-  app-name: "edu11"
+  pod-name: "edu5"
+  app-name: "edu5"
 
 springdoc:
+  show-actuator: true  # actuator swagger 노출
   swagger-ui:
-    operations-sorter: alpha
-    tags-sorter: alpha
+    groups-order: DESC
+    #operations-sorter: alpha
+    #tags-sorter: alpha
     disable-swagger-default-url: true
-    doc-expansion: none
+    #doc-expansion: none
 
 logging:
   level:
