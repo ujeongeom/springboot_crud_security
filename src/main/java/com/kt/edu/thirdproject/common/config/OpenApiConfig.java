@@ -14,7 +14,10 @@ import io.swagger.v3.oas.models.info.License;
 public class OpenApiConfig {
 
     @Value("${spring.application.name}")
-    private String group;
+    private String applicationName;
+    
+    //@Value("${spring.application.name}")
+    //private String group;
 
     @Value("${app-info.title}")
     private String title;
@@ -37,16 +40,38 @@ public class OpenApiConfig {
     @Value("${app-info.doc-url}")
     private String docUurl;
 
-    @Profile({"local", "dev"})
+    /*@Profile({"local", "dev"})
     @Bean
     public GroupedOpenApi openApi() {
         String[] paths = {"/**"};
         return GroupedOpenApi.builder().group(group).pathsToMatch(paths).build();
+    } */
+
+    @Profile({"local", "dev"})
+    @Bean
+    public GroupedOpenApi customApi() {
+        return GroupedOpenApi.builder().group("api").pathsToMatch("/api/**").build();
     }
 
+    @Profile({"local", "dev"})
+    @Bean
+    public GroupedOpenApi actuatorApi() {
+        return GroupedOpenApi.builder().group("actuator").pathsToMatch("/actuator/**").build();
+    }
+
+    private SecurityScheme createAPIKeyScheme() {
+        return new SecurityScheme().type(SecurityScheme.Type.HTTP)
+                .bearerFormat("JWT")
+                .scheme("bearer");
+    }
+    
     @Bean
     public OpenAPI springShopOpenAPI() {
         return new OpenAPI()
+                .addSecurityItem(new SecurityRequirement().
+                        addList("Bearer Authentication"))
+                .components(new Components().addSecuritySchemes
+                        ("Bearer Authentication", createAPIKeyScheme()))
                 .info(new Info().title(title)
                         .description(desc)
                         .version(version)
